@@ -1,7 +1,25 @@
+#!/usr/bin/python3
+"""
+Module to validate UTF-8 encoding.
+"""
+
 def validUTF8(data):
+    """
+    Determine if a given data set represents a valid UTF-8 encoding.
+
+    Args:
+        data (list): A list of integers representing bytes in the data set.
+
+    Returns:
+        bool: True if data is a valid UTF-8 encoding, else False.
+    """
     num_bytes = 0
 
     for byte in data:
+        # Ensure the byte is within the valid range (0 to 255)
+        if byte > 255:
+            return False
+
         # Get the 8 least significant bits
         byte = byte & 0xFF
 
