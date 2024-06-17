@@ -13,15 +13,25 @@ request(apiUrl, (error, response, body) => {
   const filmData = JSON.parse(body);
   const characters = filmData.characters;
 
-  characters.forEach((characterUrl) => {
-    request(characterUrl, (error, response, body) => {
-      if (error) {
-        console.error(error);
-        return;
-      }
+  const characterPromises = characters.map(characterUrl => {
+    return new Promise((resolve, reject) => {
+      request(characterUrl, (error, response, body) => {
+        if (error) {
+          reject(error);
+          return;
+        }
 
-      const characterData = JSON.parse(body);
-      console.log(characterData.name);
+        const characterData = JSON.parse(body);
+        resolve(characterData.name);
+      });
     });
   });
+
+  Promise.all(characterPromises)
+    .then(names => {
+      names.forEach(name => console.log(name));
+    })
+    .catch(error => {
+      console.error(error);
+    });
 });
