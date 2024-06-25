@@ -1,5 +1,11 @@
 #!/usr/bin/python3
 
+"""
+This module provides a function to determine the minimum number of coins needed
+to meet a given amount total using a dynamic programming approach.
+If the total cannot be met by any combination of the coins, the function returns -1.
+"""
+
 def makeChange(coins, total):
     """
     Determine the minimum number of coins needed to meet a given amount total.
