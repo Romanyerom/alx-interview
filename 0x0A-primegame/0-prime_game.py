@@ -28,20 +28,21 @@ def isWinner(x, nums):
                 break
 
     # Determine the winner for each game in nums
-    maria_wins, ben_wins = 0, 0
+    ben_wins, maria_wins = 0, 0
     for n in nums:
         if dp[n] == 1:
-            maria_wins += 1
-        else:
             ben_wins += 1
+        else:
+            maria_wins += 1
 
-    if maria_wins > ben_wins:
-        return "Maria"
-    elif ben_wins > maria_wins:
+    if ben_wins > maria_wins:
         return "Ben"
+    elif maria_wins > ben_wins:
+        return "Maria"
     else:
         return None
 
 if __name__ == "__main__":
     print("Winner:", isWinner(5, [2, 5, 1, 4, 3]))
+
 
