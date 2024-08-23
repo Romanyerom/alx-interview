@@ -1,1 +1,2 @@
-break down the solution for the competitive prime number game problem
+# `PrimeGame`
+![](https://cdn.educba.com/academy/wp-content/uploads/2019/12/prime-numbers-in-python.jpg.webp)

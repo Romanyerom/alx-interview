@@ -1,48 +1,32 @@
 #!/usr/bin/python3
+"""Prime game winner determination"""
+
 
 def isWinner(x, nums):
-    if not nums or x < 1:
+    """Prime game winner determination"""
+    if x < 1 or not nums:
         return None
 
-    max_n = max(nums)
+    m_wins = 0
+    b_wins = 0
 
-    # Sieve of Eratosthenes to find all primes <= max_n
-    is_prime = [True] * (max_n + 1)
-    is_prime[0], is_prime[1] = False, False
-    for i in range(2, int(max_n ** 0.5) + 1):
-        if is_prime[i]:
-            for multiple in range(i * i, max_n + 1, i):
-                is_prime[multiple] = False
-    primes = [num for num, prime in enumerate(is_prime) if prime]
+    # generate a list of prime number based on the max numbers in num
+    n = max(nums)
+    primes = [True] * (n + 1)
+    primes[0] = primes[1] = False
 
-    # Dynamic programming array to store win/lose for each number
-    dp = [0] * (max_n + 1)  # dp[i] will be 1 if starting with i is a winning state for Maria
+    for x in range(2, int(n**0.5) + 1):
+        if primes[x]:
+            for y in range(x**2, n + 1, x):
+                primes[y] = False
 
-    # Precompute the winner for every number from 0 to max_n
-    for i in range(2, max_n + 1):
-        for prime in primes:
-            if prime > i:
-                break
-            if dp[i - prime] == 0:
-                dp[i] = 1
-                break
-
-    # Determine the winner for each game in nums
-    ben_wins, maria_wins = 0, 0
+    # count the no of pm less than n i nums
     for n in nums:
-        if dp[n] == 1:
-            ben_wins += 1
-        else:
-            maria_wins += 1
+        count = sum(primes[2:n+1])
+        b_wins += count % 2 == 0
+        m_wins += count % 2 == 1
 
-    if ben_wins > maria_wins:
-        return "Ben"
-    elif maria_wins > ben_wins:
-        return "Maria"
-    else:
+    if m_wins == b_wins:
         return None
 
-if __name__ == "__main__":
-    print("Winner:", isWinner(5, [2, 5, 1, 4, 3]))
-
-
+    return 'Maria' if m_wins > b_wins else 'Ben'
