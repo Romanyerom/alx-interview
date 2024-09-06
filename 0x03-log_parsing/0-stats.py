@@ -1,44 +1,54 @@
 #!/usr/bin/python3
-"""script that reads stdin line by line and computes metrics"""
-
 import sys
 
+# Initialize variables
+total_file_size = 0
+status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+line_count = 0
 
-i = 0
-sum_file_size = 0
-status_code = {'200': 0,
-               '301': 0,
-               '400': 0,
-               '401': 0,
-               '403': 0,
-               '404': 0,
-               '405': 0,
-               '500': 0}
+def print_stats():
+    """Prints the statistics"""
+    print(f"File size: {total_file_size}")
+    for code in sorted(status_codes.keys()):
+        if status_codes[code] > 0:
+            print(f"{code}: {status_codes[code]}")
 
 try:
     for line in sys.stdin:
-        args = line.split(' ')
-        if len(args) > 2:
-            status_line = args[-2]
-            file_size = args[-1]
-            if status_line in status_code:
-                status_code[status_line] += 1
-            sum_file_size += int(file_size)
-            i += 1
-            if i == 10:
-                print('File size: {:d}'.format(sum_file_size))
-                sorted_keys = sorted(status_code.keys())
-                for key in sorted_keys:
-                    value = status_code[key]
-                    if value != 0:
-                        print('{}: {}'.format(key, value))
-                i = 0
-except Exception:
-    pass
-finally:
-    print('File size: {:d}'.format(sum_file_size))
-    sorted_keys = sorted(status_code.keys())
-    for key in sorted_keys:
-        value = status_code[key]
-        if value != 0:
-            print('{}: {}'.format(key, value))
+        try:
+            parts = line.split()
+            if len(parts) < 7:
+                continue
+
+            # Parse the relevant parts of the log line
+            ip = parts[0]
+            date = parts[3] + parts[4]
+            request = parts[5] + " " + parts[6] + " " + parts[7]
+            status_code = int(parts[-2])
+            file_size = int(parts[-1])
+
+            # Update total file size
+            total_file_size += file_size
+
+            # Update status code count if valid
+            if status_code in status_codes:
+                status_codes[status_code] += 1
+
+            line_count += 1
+
+            # Every 10 lines, print the statistics
+            if line_count % 10 == 0:
+                print_stats()
+
+        except Exception:
+            # Skip lines that don't match the expected format
+            continue
+
+except KeyboardInterrupt:
+    # On keyboard interruption, print final stats
+    print_stats()
+    raise
+
+# In case the input stops before an interrupt and not a multiple of 10
+print_stats()
+
